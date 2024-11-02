@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include_once 'server_conexion.php'; // Cargar la configuración de la base de datos
+include_once 'server_conexion.php'; 
 
 try {
     $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
@@ -17,7 +17,7 @@ try {
             $nombre = $_POST['nombre'];
             $email = $_POST['email'];
             $telefono = $_POST['telefono'];
-            $contrasenia = $_POST['contrasenia'];
+            $contrasenia = $_POST['password'];
             //$contrasenia = password_hash($_POST['contrasenia'], PASSWORD_DEFAULT);
 
             $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, email, telefono, password, sincronizado) VALUES (?, ?, ?, ?, 1)");

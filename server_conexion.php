@@ -4,7 +4,7 @@ $db_host = 'localhost';
 $db_name = 'sistema_facturacion';
 $db_charset = 'utf8';
 $db_user = 'root';
-$db_pass = 'ciro';
+$db_pass = '';
 
 // Definir constantes automáticamente
 define('DB_HOST', $db_host);
@@ -22,9 +22,6 @@ try {
         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . DB_CHARSET,
         PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false, // Opcional, si usas SSL
     ]);
-
-    // Añadir allowPublicKeyRetrieval
-    $pdo->exec("SET SESSION allowPublicKeyRetrieval = 1");
     
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Error de conexión: ' . $e->getMessage()]);
