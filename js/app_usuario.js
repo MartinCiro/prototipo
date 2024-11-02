@@ -21,152 +21,194 @@ modal.addEventListener('click', (event) => {
 
 // FUNCIONES CRUD
 document.addEventListener("DOMContentLoaded", function () {
-    const dataForm = document.getElementById("dataForm");
-    const dataList = document.getElementById("dataList");
-    const modalExito = document.getElementById("modalExito");
-    const mensajeExito = document.getElementById("mensajeExito");
-    const modalEliminar = document.getElementById("modalEliminar");
-    const btnEliminar = document.getElementById("btnEliminar");
-    let currentId = null;
-
-    // Cargar todos los usuarios al inicio
-    fetchUsers();
-
-    // Función para mostrar el modal de éxito (oculta el modal después de 3 segundos)
-    function showModalExito(message) {
-        mensajeExito.textContent = message;
-        modalExito.classList.remove("hidden");
-        setTimeout(() => modalExito.classList.add("hidden"), 3000);
+    class ApiService {
+        constructor(baseURL) {
+            this.baseURL = baseURL; 
+        }
+    
+        async request(method, endpoint, data = null) {
+            const options = {
+                method: method,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            };
+    
+            if (data) options.body = data;
+    
+            try {
+                const response = await fetch(`${this.baseURL}/${endpoint}`, options);
+                if (!response.ok) throw new Error("Error en la respuesta de la red");
+                return await response.json();
+            } catch (error) {
+                console.error("Error en la solicitud:", error);
+                throw error;
+            }
+        }
     }
-
-    // Función para cargar los usuarios
-    function fetchUsers() {
-        fetch("server_usuario.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "action=fetch",
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Error en la respuesta de la red");
-                }
-                return response.json();
-            })
-            .then(users => {
-                dataList.innerHTML = "";
-                if (users.length === 0) {
-                    dataList.innerHTML = "<p>No hay usuarios disponibles.</p>";
-                }
-                users.forEach(user => {
-                    const userCard = document.createElement("div");
-                    userCard.className = "p-4 border rounded-lg shadow-md bg-white";
-                    userCard.innerHTML = `
-                        <h3 class="text-lg font-semibold">${user.nombre}</h3>
-                        <p>Email: ${user.email}</p>
-                        <p>Teléfono: ${user.telefono}</p>
-                        <div class="mt-4 flex justify-between">
-                            <button onclick="editUser(${user.id})" class="bg-blue-500 text-white px-4 py-2 rounded">Editar</button>
-                            <button onclick="confirmDelete(${user.id})" class="bg-red-500 text-white px-4 py-2 rounded">Eliminar</button>
-                        </div>
-                    `;
-                    dataList.appendChild(userCard);
-                });
-            })
-            .catch(error => {
-                console.error("Error al cargar usuarios:", error);
-                dataList.innerHTML = "<p>Ocurrió un error al cargar los usuarios.</p>";
-            });
+    
+    class CrudService extends ApiService {
+        constructor(endpoint) {
+            super(endpoint); // Llama al constructor de ApiService
+            this.endpoint = endpoint; // Guarda el endpoint específico
+        }
+    
+        async fetchAll() {
+            return await this.request("POST", this.endpoint, "action=fetch");
+        }
+    
+        async add(data) {
+            const formData = new URLSearchParams({ ...data, action: "add" });
+            return await this.request("POST", this.endpoint, formData);
+        }
+    
+        async update(data) {
+            const formData = new URLSearchParams({ ...data, action: "update" });
+            return await this.request("POST", this.endpoint, formData);
+        }
+    
+        async delete(id) {
+            return await this.request("POST", this.endpoint, `action=delete&id=${id}`);
+        }
     }
-
-    // Función para agregar o actualizar usuario
-    dataForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const formData = new FormData(dataForm);
-        const action = currentId ? "update" : "add";
-        formData.append("action", action);
-        if (currentId) formData.append("id", currentId);
-
-        fetch("server_usuario.php", {
-            method: "POST",
-            body: formData,
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showModalExito(data.message);
-                    dataForm.reset();
-                    currentId = null;
-                    fetchUsers();
-
-                    // Ocultar el sidebar tras guardar exitosamente
-                    barraLateral.classList.remove("active");
-                } else {
-                    console.log("Error: " + data.message);
-                }
-            })
-            .catch(error => console.error("Error en el guardado:", error));
-    });
-
-    // Función para editar usuario
-    window.editUser = function (id) {
-        fetch("server_usuario.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `action=fetch&id=${id}`,
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Error en la respuesta de la red");
-                }
-                return response.json();
-            })
-            .then(user => {
-                if (user && user.nombre && user.email && user.telefono && user.password) {
-                    document.getElementById("nombre").value = user.nombre;
-                    document.getElementById("email").value = user.email;
-                    document.getElementById("telefono").value = user.telefono;
-                    document.getElementById("contrasenia").value = user.password;
-                    currentId = id;
-
-                    // Mostrar el sidebar para editar
-                    barraLateral.classList.add("active");
-                } else {
-                    showModalExito("Error al cargar los datos del usuario. Intenta nuevamente.");
-                }
-            })
-            .catch(error => {
-                console.error("Error al cargar usuario:", error);
-                showModalExito("Ocurrió un error al intentar cargar los datos del usuario.");
+    
+    // Clase específica para Usuarios
+    class UserService extends CrudService {
+        constructor() {
+            super('server_usuario.php'); // Especifica el endpoint de usuarios
+        }
+    }
+    
+    // Clase para manejar la interfaz de usuario
+    class UserApp {
+        constructor(userService) {
+            this.userService = userService;
+            this.dataForm = document.getElementById("dataForm");
+            this.dataList = document.getElementById("dataList");
+            this.modalExito = document.getElementById("modalExito");
+            this.mensajeExito = document.getElementById("mensajeExito");
+            this.modalEliminar = document.getElementById("modalEliminar");
+            this.btnEliminar = document.getElementById("btnEliminar");
+            this.currentId = null;
+    
+            this.init();
+        }
+    
+        init() {
+            document.addEventListener("DOMContentLoaded", () => {
+                this.fetchUsers();
+                this.dataForm.addEventListener("submit", (event) => this.handleFormSubmit(event));
+                this.btnEliminar.addEventListener("click", () => this.deleteUser());
+                document.getElementById("btnCancelar").addEventListener("click", () => this.closeDeleteModal());
             });
-    };
-
-    // Función para confirmar eliminación de usuario
-    window.confirmDelete = function (id) {
-        currentId = id;
-        modalEliminar.classList.remove("hidden");
-    };
-
-    // Eliminar usuario
-    btnEliminar.addEventListener("click", function () {
-        fetch("server_usuario.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `action=delete&id=${currentId}`,
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showModalExito(data.message);
-                    fetchUsers();
-                    currentId = null;
+        }
+    
+        async fetchUsers() {
+            try {
+                const users = await this.userService.fetchAll();
+                this.renderUserList(users);
+            } catch (error) {
+                this.showMessage("Ocurrió un error al cargar los usuarios.");
+            }
+        }
+    
+        renderUserList(users) {
+            this.dataList.innerHTML = "";
+            if (users.length === 0) {
+                this.dataList.innerHTML = "<p>No hay usuarios disponibles.</p>";
+                return;
+            }
+    
+            users.forEach(user => {
+                const userCard = document.createElement("div");
+                userCard.className = "p-4 border rounded-lg shadow-md bg-white";
+                userCard.innerHTML = `
+                    <h3 class="text-lg font-semibold">${user.nombre}</h3>
+                    <p>Email: ${user.email}</p>
+                    <p>Teléfono: ${user.telefono}</p>
+                    <div class="mt-4 flex justify-between">
+                        <button onclick="userApp.editUser(${user.id})" class="bg-blue-500 text-white px-4 py-2 rounded">Editar</button>
+                        <button onclick="userApp.confirmDelete(${user.id})" class="bg-red-500 text-white px-4 py-2 rounded">Eliminar</button>
+                    </div>
+                `;
+                this.dataList.appendChild(userCard);
+            });
+        }
+    
+        async handleFormSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(this.dataForm);
+            const userData = {
+                nombre: formData.get("nombre"),
+                email: formData.get("email"),
+                telefono: formData.get("telefono"),
+                password: formData.get("contrasenia"),
+            };
+    
+            try {
+                if (this.currentId) {
+                    userData.id = this.currentId;
+                    await this.userService.update(userData);
+                    this.showMessage("Usuario actualizado con éxito.");
+                } else {
+                    await this.userService.add(userData);
+                    this.showMessage("Usuario agregado con éxito.");
                 }
-                modalEliminar.classList.add("hidden");
-            })
-            .catch(error => console.error("Error al eliminar usuario:", error));
-    });
-
-    // Cerrar modal de eliminación
-    document.getElementById("btnCancelar").addEventListener("click", function () {
-        modalEliminar.classList.add("hidden");
-    });
+                this.dataForm.reset();
+                this.currentId = null;
+                this.fetchUsers();
+            } catch (error) {
+                this.showMessage("Error al guardar el usuario.");
+            }
+        }
+    
+        async editUser(id) {
+            try {
+                const user = await this.userService.fetchAll(); // Cambiar para obtener datos del usuario específico
+                this.populateForm(user.find(u => u.id === id)); // Obtener el usuario por ID
+                this.currentId = id;
+            } catch (error) {
+                this.showMessage("Error al cargar los datos del usuario.");
+            }
+        }
+    
+        populateForm(user) {
+            document.getElementById("nombre").value = user.nombre;
+            document.getElementById("email").value = user.email;
+            document.getElementById("telefono").value = user.telefono;
+            document.getElementById("contrasenia").value = user.password;
+        }
+    
+        confirmDelete(id) {
+            this.currentId = id;
+            this.modalEliminar.classList.remove("hidden");
+        }
+    
+        async deleteUser() {
+            try {
+                await this.userService.delete(this.currentId);
+                this.showMessage("Usuario eliminado con éxito.");
+                this.fetchUsers();
+            } catch (error) {
+                this.showMessage("Error al eliminar el usuario.");
+            } finally {
+                this.closeDeleteModal();
+            }
+        }
+    
+        closeDeleteModal() {
+            this.modalEliminar.classList.add("hidden");
+        }
+    
+        showMessage(message) {
+            this.mensajeExito.textContent = message;
+            this.modalExito.classList.remove("hidden");
+            setTimeout(() => this.modalExito.classList.add("hidden"), 3000);
+        }
+    }
+    
+    // Inicializar la aplicación
+    const userService = new UserService(); // Crea la instancia de UserService
+    const userApp = new UserApp(userService);
+    
 });
