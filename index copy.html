@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>usuario</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="flex min-h-screen bg-gray-100 text-gray-800">
+
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-10 p-4">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Menú</h2>
+        <a href="index.html" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white">Inicio</a>
+        <a href="usuario.html" class="block px-4 py-2 text-gray-800 hover:bg-indigo-600 hover:text-white">Usuarios</a>
+        <!-- Otros enlaces -->
+    </aside>
+
+    <!-- Contenido Principal -->
+    <div class="flex-grow ml-64">
+        <!-- Encabezado Principal -->
+        <header class="bg-indigo-600 p-4 shadow-md flex items-center justify-between">
+            <button id="toggleButton" class="p-2 text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+            <h1 class="text-white text-3xl font-bold">Inicio</h1>
+        </header>
+
+        <main id="mainContent" class="flex-grow container mx-auto my-10 px-4">
+            <section class="bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Bienvenido</h2>
+                <p class="text-gray-600">Esta es la página de inicio de la aplicación de gestión.</p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Pie de Página Fijo -->
+    <footer class="bg-indigo-600 text-white text-left p-4 fixed bottom-0 w-full">
+        <p>&copy; 2024 Sistema de Gestión. Jose Germán Estrada Clavijo.</p>
+    </footer>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const toggleButton = document.getElementById('toggleButton');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+    </script>
+
+</body>
+
+</html>
