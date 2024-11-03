@@ -11,6 +11,15 @@ closeModal.addEventListener('click', () => {
     modal.classList.add('hidden');
 });
 
+document.querySelectorAll('.btn-editar').forEach(button => {
+    button.addEventListener('click', function() {
+        // Abre el modal
+        document.getElementById('modalEdicion').classList.remove('hidden');
+        // Aquí puedes también llenar los campos del formulario con los datos del usuario a editar
+    });
+});
+
+
 // Cerrar el modal al hacer clic fuera de él
 modal.addEventListener('click', (event) => {
     if (event.target === modal) {
@@ -52,6 +61,7 @@ class UserService extends ApiService {
     async fetchAll() {
         return await this.request("POST", "", "action=fetch");
     }
+
 
     async add(data) {
         const formData = new URLSearchParams({ ...data, action: "add" });
@@ -130,12 +140,13 @@ class UserApp {
             nombre: formData.get("nombre"),
             email: formData.get("email"),
             telefono: formData.get("telefono"),
-            password: formData.get("contrasenia"),
+            contrasenia: formData.get("contrasenia"),
         };
 
         try {
             if (this.currentId) {
                 userData.id = this.currentId;
+                console.log(userData);
                 await this.userService.update(userData);
                 this.showMessage("Usuario actualizado con éxito.");
             } else {
@@ -157,6 +168,8 @@ class UserApp {
             if (user) {
                 this.populateForm(user);
                 this.currentId = id;
+            } else {
+                this.showMessage("Usuario no encontrado.");
             }
         } catch (error) {
             this.showMessage("Error al cargar los datos del usuario.");
@@ -164,10 +177,14 @@ class UserApp {
     }
 
     populateForm(user) {
-        document.getElementById("nombre").value = user.nombre;
-        document.getElementById("email").value = user.email;
-        document.getElementById("telefono").value = user.telefono;
-        document.getElementById("contrasenia").value = user.password;
+        document.getElementById('id').value = user.id; 
+        document.getElementById('nombre').value = user.nombre;
+        document.getElementById('email').value = user.email;
+        document.getElementById('telefono').value = user.telefono;
+        document.getElementById('contrasenia').value = '';
+        
+        
+        document.getElementById('modal').classList.remove('hidden');
     }
 
     confirmDelete(id) {

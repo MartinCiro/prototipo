@@ -17,7 +17,7 @@ try {
             $nombre = $_POST['nombre'];
             $email = $_POST['email'];
             $telefono = $_POST['telefono'];
-            $contrasenia = $_POST['password'];
+            $contrasenia = $_POST['contrasenia'];
             //$contrasenia = password_hash($_POST['contrasenia'], PASSWORD_DEFAULT);
 
             $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, email, telefono, password, sincronizado) VALUES (?, ?, ?, ?, 1)");
