@@ -1,4 +1,7 @@
+import { insertHtml } from './utils.js';
+
 document.addEventListener('DOMContentLoaded', function () {
+    insertHtml('sidebar');
     const dropdownButton = document.getElementById('dropdownButton');
     const sidebar = document.getElementById('sidebar');
 
@@ -14,4 +17,5 @@ document.addEventListener('DOMContentLoaded', function () {
             sidebar.classList.remove('active');
         }
     });
+    
 });

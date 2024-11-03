@@ -1,24 +1,7 @@
 //importar apiService
 import Service from './generic_server.js'; 
-
-const openModal = document.getElementById('openModal');
-const closeModal = document.getElementById('closeModal');
-const modal = document.getElementById('modal');
-
-openModal.addEventListener('click', () => {
-    modal.classList.remove('hidden');
-});
-
-closeModal.addEventListener('click', () => {
-    modal.classList.add('hidden');
-});
-
-// Cerrar el modal al hacer clic fuera de él
-modal.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        modal.classList.add('hidden');
-    }
-});
+import Modal from './modal.js';
+import { insertHtml } from './utils.js';
 
 class UserApp {
     constructor(userService) {
@@ -30,14 +13,14 @@ class UserApp {
         this.modalEliminar = document.getElementById("modalEliminar");
         this.btnEliminar = document.getElementById("btnEliminar");
         this.currentId = null;
-
+        this.modal = new Modal('modal');
         this.init();
     }
 
     init() {
         document.addEventListener("DOMContentLoaded", () => {
             this.fetchUsers();
-            this.insertHtml('sidebar');
+            insertHtml('sidebar');
             this.dataForm.addEventListener("submit", (event) => this.handleFormSubmit(event));
             this.btnEliminar.addEventListener("click", () => this.deleteUser());
             document.getElementById("btnCancelar").addEventListener("click", () => this.closeDeleteModal());
@@ -89,7 +72,6 @@ class UserApp {
         try {
             let response;
             if (!this.currentId) {
-                // Crear nuevo usuario
                 response = await this.userService.add(userData);
             } else {
                 // Editar usuario existente
@@ -100,10 +82,10 @@ class UserApp {
             // Manejar la respuesta
             this.showMessage(response.message);
             if (response.success) {
-                this.dataForm.reset(); // Reiniciar los campos
-                this.currentId = null; // Resetear el ID
-                this.closeModal(); // Cerrar el modal
-                this.fetchUsers(); // Actualizar la lista de usuarios
+                this.dataForm.reset(); 
+                this.currentId = null; 
+                this.modal.close(); 
+                this.fetchUsers(); 
             }
         } catch (error) {
             this.showMessage("Error al guardar el usuario."); // Mensaje genérico
@@ -113,7 +95,7 @@ class UserApp {
 
     async editUser(id) {
         try {
-            // Intentar obtener el usuario directamente sin llamar a fetchAll nuevamente
+            // Filtrar el usuario por su ID
             const user = await this.userService.fetchAll().then(users => users.find(u => u.id === id));
     
             if (user) {
@@ -129,7 +111,6 @@ class UserApp {
         }
     }
     
-
     populateForm(user) {
         document.getElementById('id').value = user.id; 
         document.getElementById('nombre').value = user.nombre;
@@ -137,40 +118,8 @@ class UserApp {
         document.getElementById('telefono').value = user.telefono;
         document.getElementById('contrasenia').value = '';
         
-    }
-
-    confirmDelete(id) {
-        this.currentId = id;
-        this.modalEliminar.classList.remove("hidden");
-    }
-
-    insertHtml(html, nomId = null) {
-        // Si nomId es nulo, asignar el valor de html
-        if (nomId === null) {
-            nomId = html;
-        }
-        
-        fetch(`../components/${html}.html`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
-                }
-                return response.text();
-            })
-            .then(data => {
-                const element = document.getElementById(nomId);
-                if (element) {
-                    element.innerHTML = data;
-                } else {
-                    console.error(`Element with ID ${nomId} not found.`);
-                }
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }
+    }    
     
-
     async deleteUser() {
         try {
             const response = await this.userService.delete(this.currentId);
@@ -183,8 +132,9 @@ class UserApp {
         }
     }
 
-    closeModal() {
-        document.getElementById('modal').classList.add('hidden'); // Cerrar el modal
+    confirmDelete(id) {
+        this.currentId = id;
+        this.modalEliminar.classList.remove("hidden");
     }
 
     closeDeleteModal() {

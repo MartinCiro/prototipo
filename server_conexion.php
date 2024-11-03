@@ -20,7 +20,7 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_PERSISTENT => true,
         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . DB_CHARSET,
-        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false, // Opcional, si usas SSL
+        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
     ]);
     
 } catch (PDOException $e) {
