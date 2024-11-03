@@ -11,15 +11,6 @@ closeModal.addEventListener('click', () => {
     modal.classList.add('hidden');
 });
 
-document.querySelectorAll('.btn-editar').forEach(button => {
-    button.addEventListener('click', function() {
-        // Abre el modal
-        document.getElementById('modalEdicion').classList.remove('hidden');
-        // Aquí puedes también llenar los campos del formulario con los datos del usuario a editar
-    });
-});
-
-
 // Cerrar el modal al hacer clic fuera de él
 modal.addEventListener('click', (event) => {
     if (event.target === modal) {
@@ -142,32 +133,42 @@ class UserApp {
             telefono: formData.get("telefono"),
             contrasenia: formData.get("contrasenia"),
         };
-
+    
         try {
-            if (this.currentId) {
-                userData.id = this.currentId;
-                console.log(userData);
-                await this.userService.update(userData);
-                this.showMessage("Usuario actualizado con éxito.");
+            let response;
+            if (!this.currentId) {
+                // Crear nuevo usuario
+                response = await this.userService.add(userData);
             } else {
-                await this.userService.add(userData);
-                this.showMessage("Usuario agregado con éxito.");
+                // Editar usuario existente
+                userData.id = this.currentId;
+                response = await this.userService.update(userData);
             }
-            this.dataForm.reset();
-            this.currentId = null;
-            this.fetchUsers();
+    
+            // Manejar la respuesta
+            this.showMessage(response.message);
+            if (response.success) {
+                this.dataForm.reset(); // Reiniciar los campos
+                this.currentId = null; // Resetear el ID
+                this.closeModal(); // Cerrar el modal
+                this.fetchUsers(); // Actualizar la lista de usuarios
+            }
         } catch (error) {
-            this.showMessage("Error al guardar el usuario.");
+            this.showMessage("Error al guardar el usuario."); // Mensaje genérico
         }
     }
+    
 
     async editUser(id) {
         try {
-            const users = await this.userService.fetchAll();
-            const user = users.find(u => u.id === id);
+            // Intentar obtener el usuario directamente sin llamar a fetchAll nuevamente
+            const user = await this.userService.fetchAll().then(users => users.find(u => u.id === id));
+    
             if (user) {
                 this.populateForm(user);
                 this.currentId = id;
+                // Abrir el modal para editar
+                document.getElementById('modal').classList.remove('hidden');
             } else {
                 this.showMessage("Usuario no encontrado.");
             }
@@ -175,6 +176,7 @@ class UserApp {
             this.showMessage("Error al cargar los datos del usuario.");
         }
     }
+    
 
     populateForm(user) {
         document.getElementById('id').value = user.id; 
@@ -183,8 +185,6 @@ class UserApp {
         document.getElementById('telefono').value = user.telefono;
         document.getElementById('contrasenia').value = '';
         
-        
-        document.getElementById('modal').classList.remove('hidden');
     }
 
     confirmDelete(id) {
@@ -194,14 +194,18 @@ class UserApp {
 
     async deleteUser() {
         try {
-            await this.userService.delete(this.currentId);
-            this.showMessage("Usuario eliminado con éxito.");
+            const response = await this.userService.delete(this.currentId);
+            this.showMessage(response.message);
             this.fetchUsers();
         } catch (error) {
             this.showMessage("Error al eliminar el usuario.");
         } finally {
             this.closeDeleteModal();
         }
+    }
+
+    closeModal() {
+        document.getElementById('modal').classList.add('hidden'); // Cerrar el modal
     }
 
     closeDeleteModal() {
