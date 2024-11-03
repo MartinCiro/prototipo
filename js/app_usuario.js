@@ -1,3 +1,5 @@
+//importar apiService
+import Service from './generic_server.js'; 
 
 const openModal = document.getElementById('openModal');
 const closeModal = document.getElementById('closeModal');
@@ -18,57 +20,6 @@ modal.addEventListener('click', (event) => {
     }
 });
 
-class ApiService {
-    constructor(baseURL) {
-        this.baseURL = baseURL;
-    }
-
-    async request(method, endpoint, data = null) {
-        const options = {
-            method: method,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-        };
-
-        if (data) options.body = data;
-
-        try {
-            const response = await fetch(`${this.baseURL}/${endpoint}`, options);
-            if (!response.ok) throw new Error("Error en la respuesta de la red");
-            return await response.json();
-        } catch (error) {
-            console.error("Error en la solicitud:", error);
-            throw error;
-        }
-    }
-}
-
-class UserService extends ApiService {
-    constructor() {
-        super('server_usuario.php');
-    }
-
-    async fetchAll() {
-        return await this.request("POST", "", "action=fetch");
-    }
-
-
-    async add(data) {
-        const formData = new URLSearchParams({ ...data, action: "add" });
-        return await this.request("POST", "", formData);
-    }
-
-    async update(data) {
-        const formData = new URLSearchParams({ ...data, action: "update" });
-        return await this.request("POST", "", formData);
-    }
-
-    async delete(id) {
-        return await this.request("POST", "", `action=delete&id=${id}`);
-    }
-}
-
 class UserApp {
     constructor(userService) {
         this.userService = userService;
@@ -86,6 +37,7 @@ class UserApp {
     init() {
         document.addEventListener("DOMContentLoaded", () => {
             this.fetchUsers();
+            this.insertHtml('sidebar');
             this.dataForm.addEventListener("submit", (event) => this.handleFormSubmit(event));
             this.btnEliminar.addEventListener("click", () => this.deleteUser());
             document.getElementById("btnCancelar").addEventListener("click", () => this.closeDeleteModal());
@@ -192,6 +144,33 @@ class UserApp {
         this.modalEliminar.classList.remove("hidden");
     }
 
+    insertHtml(html, nomId = null) {
+        // Si nomId es nulo, asignar el valor de html
+        if (nomId === null) {
+            nomId = html;
+        }
+        
+        fetch(`../components/${html}.html`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                const element = document.getElementById(nomId);
+                if (element) {
+                    element.innerHTML = data;
+                } else {
+                    console.error(`Element with ID ${nomId} not found.`);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+    
+
     async deleteUser() {
         try {
             const response = await this.userService.delete(this.currentId);
@@ -220,5 +199,6 @@ class UserApp {
 }
 
 // Inicializar la aplicación
-const userService = new UserService();
+const userService = new Service('server_usuario.php');
 const userApp = new UserApp(userService);
+window.userApp = userApp;
