@@ -27,9 +27,6 @@
         <h1 class="text-white text-3xl font-bold">Usuarios</h1>
     </header>
 
-    <!-- Menú lateral con formulario -->
-    <aside id="sidebar" class="bg-white w-72 h-full shadow-lg p-6 overflow-auto hidden"></aside>
-
     <!-- Contenedor de tarjetas de usuarios -->
     <main id="mainContent" class="container mx-auto my-10 px-4">
         <div id="dataList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
@@ -37,7 +34,7 @@
 
     <!-- Botón flotante para abrir el formulario lateral -->
     <button id="openModal"
-        class="absolute bottom-9 right-5 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none z-20"
+        class="fixed bottom-24 sm:bottom-28 sm:right-5 right-5 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none z-20"
         aria-label="Abrir formulario">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path

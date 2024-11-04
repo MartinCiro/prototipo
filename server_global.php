@@ -25,7 +25,7 @@ function handleOperation($pdo, $action, $table, $data) {
                 
             } catch (PDOException $e) {
                 if ($e->errorInfo[1] == 1062) { 
-                    return ['success' => false, 'message' => 'Imposible, el usuario (correo) ya se encuentra registrado.'];
+                    return ['success' => false, 'message' => 'El dato ya se encuentra registrado.'];
                 }
 
                 return ['success' => false, 'message' => 'Error al crear el registro: ' . $e->getMessage()];
@@ -61,14 +61,14 @@ function handleOperation($pdo, $action, $table, $data) {
             return ['success' => true, 'message' => 'Eliminado con éxito.'];
 
         case 'fetch':
-            if (isset($data['id'])) {
+            if (!isset($data['id'])) {
+                $stmt = $pdo->query("SELECT * FROM $table");
+                return $stmt->fetchAll(PDO::FETCH_ASSOC); 
+            } else {
                 $stmt = $pdo->prepare("SELECT * FROM $table WHERE id = ?");
                 $stmt->execute([$data['id']]);
                 $record = $stmt->fetch(PDO::FETCH_ASSOC);
                 return $record ? $record : ['success' => false, 'message' => 'Registro no encontrado.'];
-            } else {
-                $stmt = $pdo->query("SELECT * FROM $table");
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
 
         default:

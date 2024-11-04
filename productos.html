@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>usuario</title>
+    <title>Productos</title>
     <link href="css/tailwind.min.css" rel="stylesheet">
     <link href="css/style_usuario.css" rel="stylesheet">
 </head>
@@ -24,13 +24,9 @@
             </button>
             <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-10 p-4 hidden"></aside>
         </div>
-        <h1 class="text-white text-3xl font-bold">Usuarios</h1>
+        <h1 class="text-white text-3xl font-bold">Productos</h1>
     </header>
 
-    <!-- Menú lateral con formulario -->
-    <aside id="sidebar" class="bg-white w-72 h-full shadow-lg p-6 overflow-auto hidden"></aside>
-
-    <!-- Contenedor de tarjetas de usuarios -->
     <main id="mainContent" class="container mx-auto my-10 px-4">
         <div id="dataList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </main>
@@ -53,23 +49,23 @@
             <form id="dataForm" class="space-y-6">
                 <input type="hidden" id="id" name="id">
                 <div>
-                    <label for="nombre" class="block text-lg font-medium">Nombre</label>
+                    <label for="nombre" class="block text-lg font-medium">Nombre del producto</label>
                     <input type="text" id="nombre" name="nombre" placeholder="Nombre" required
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
-                    <label for="email" class="block text-lg font-medium">E-mail</label>
-                    <input type="email" id="email" name="email" placeholder="E-mail" required
+                    <label for="descripcion" class="block text-lg font-medium">Descripcion</label>
+                    <input type="text" id="descripcion" name="descripcion" placeholder="Descripcion" required
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
-                    <label for="telefono" class="block text-lg font-medium">Teléfono</label>
-                    <input type="tel" id="telefono" name="telefono" placeholder="Teléfono" required
+                    <label for="precio" class="block text-lg font-medium">Precio</label>
+                    <input type="text" id="precio" name="precio" placeholder="Precio" required
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
-                    <label for="contrasenia" class="block text-lg font-medium">Contraseña</label>
-                    <input type="password" id="contrasenia" name="contrasenia" placeholder="Contraseña" required
+                    <label for="stock" class="block text-lg font-medium">Cantidad disponible</label>
+                    <input type="text" id="stock" name="stock" placeholder="Ingrese la cantidad" required
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <button type="submit"
@@ -127,7 +123,7 @@
     <footer class="bg-indigo-600 text-white text-left p-4 fixed bottom-0 w-full">
         <p>&copy; 2024 Sistema de Gestión. Todos los derechos reservados.</p>
     </footer>
-    <script type="module" src="js/app_usuario.js"></script>
+    <script type="module" src="js/app_products.js"></script>
     <script type="module" src="js/script.js"></script>
 </body>
 

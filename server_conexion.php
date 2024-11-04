@@ -4,7 +4,7 @@ $db_host = 'localhost';
 $db_name = 'sistema_facturacion';
 $db_charset = 'utf8';
 $db_user = 'root';
-$db_pass = '';
+$db_pass = 'ciro';
 
 // Definir constantes automáticamente
 define('DB_HOST', $db_host);
