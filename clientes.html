@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>usuario</title>
+    <title>Cliente</title>
     <link href="css/tailwind.min.css" rel="stylesheet">
     <link href="css/style_usuario.css" rel="stylesheet">
 </head>
@@ -24,20 +24,20 @@
             </button>
             <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-10 p-4 hidden"></aside>
         </div>
-        <h1 class="text-white text-3xl font-bold">Usuarios</h1>
+        <h1 class="text-white text-3xl font-bold">Clientes</h1>
     </header>
 
     <!-- Menú lateral con formulario -->
     <aside id="sidebar" class="bg-white w-72 h-full shadow-lg p-6 overflow-auto hidden"></aside>
 
-    <!-- Contenedor de tarjetas de usuarios -->
+    <!-- Contenedor de tarjetas de Clientes -->
     <main id="mainContent" class="container mx-auto my-10 px-4">
         <div id="dataList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </main>
 
     <!-- Botón flotante para abrir el formulario lateral -->
     <button id="openModal"
-        class="absolute bottom-9 right-5 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none z-20"
+        class="fixed bottom-24 sm:bottom-28 sm:right-5 right-5 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none z-20"
         aria-label="Abrir formulario">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path
@@ -68,20 +68,20 @@
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
-                    <label for="contrasenia" class="block text-lg font-medium">Contraseña</label>
-                    <input type="password" id="contrasenia" name="contrasenia" placeholder="Contraseña" required
+                    <label for="direccion" class="block text-lg font-medium">Direccion</label>
+                    <input type="text" id="direccion" name="direccion" placeholder="Direccion" required
                         class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <button type="submit"
                     class="block w-full py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 flex items-center justify-center"
-                    aria-label="Guardar usuario">
+                    aria-label="Guardar Cliente">
                     <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
                         <polyline points="17 21 17 13 7 13 7 21" />
                         <polyline points="7 3 7 8 15 8" />
                     </svg>
-                    Guardar Usuario
+                    Guardar Cliente
                 </button>
             </form>
             <button id="closeModal"
@@ -113,10 +113,10 @@
     <!-- Modal de Confirmación eliminar -->
     <div id="modalEliminar" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg">
-            <h2 class="text-lg font-semibold mb-4">¿Estás seguro de que deseas eliminar este usuario?</h2>
+            <h2 class="text-lg font-semibold mb-4">¿Estás seguro de que deseas eliminar este cliente?</h2>
             <div class="flex justify-end">
                 <button id="btnEliminar" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                    aria-label="Eliminar usuario">Eliminar</button>
+                    aria-label="Eliminar Cliente">Eliminar</button>
                 <button id="btnCancelar" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 ml-2"
                     aria-label="Cancelar eliminación">Cancelar</button>
             </div>
@@ -127,7 +127,7 @@
     <footer class="bg-indigo-600 text-white text-left p-4 fixed bottom-0 w-full">
         <p>&copy; 2024 Sistema de Gestión. Todos los derechos reservados.</p>
     </footer>
-    <script type="module" src="js/app_usuario.js"></script>
+    <script type="module" src="js/app_cliente.js"></script>
     <script type="module" src="js/script.js"></script>
 </body>
 

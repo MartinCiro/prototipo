@@ -30,7 +30,7 @@ class ProductApp extends BaseApp {
     }
 
     populateForm(product) {
-        document.getElementById('id').value = product.id_producto; 
+        document.getElementById('id').value = product.id; 
         document.getElementById('nombre').value = product.nombre;
         document.getElementById('descripcion').value = product.descripcion;
         document.getElementById('precio').value = product.precio;
