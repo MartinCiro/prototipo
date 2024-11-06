@@ -1,6 +1,6 @@
 <?php
 // Configuración de conexión
-$db_host = '192.168.101.6';
+$db_host = 'localhost';
 $db_name = 'sistema_facturacion';
 $db_charset = 'utf8';
 $db_user = 'root';

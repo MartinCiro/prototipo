@@ -24,14 +24,13 @@ function handleOperation($pdo, $action, $table, $data) {
                 return ['success' => true, 'message' => 'Registro creado con éxito.'];
                 
             } catch (PDOException $e) {
-                if ($e->errorInfo[1] == 1062) { 
-                    return ['success' => false, 'message' => 'El dato ya se encuentra registrado.'];
-                }
+                if ($e->errorInfo[1] == 1062) return ['success' => false, 'message' => 'El dato ya se encuentra registrado.'];
+
+                if ($e->errorInfo[1] == 23000) return ['success' => false, 'message' => 'Error de integridad: ' . $e->getMessage()];
 
                 return ['success' => false, 'message' => 'Error al crear el registro: ' . $e->getMessage()];
             }
         
-
         case 'update':
             $set = [];
             $values = []; 
@@ -44,9 +43,7 @@ function handleOperation($pdo, $action, $table, $data) {
             }
             $setString = implode(", ", $set);
         
-            if (!isset($data['id'])) {
-                return ['success' => false, 'message' => 'ID no proporcionado.'];
-            }
+            if (!isset($data['id'])) return ['success' => false, 'message' => 'ID no proporcionado.'];
         
             $stmt = $pdo->prepare("UPDATE $table SET $setString WHERE id = ?");
             $values[] = $data['id']; 
