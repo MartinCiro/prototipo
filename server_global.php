@@ -106,9 +106,7 @@ function handleOperation($pdo, $action, $table, $data) {
 
         case 'fetch':
             if (!isset($data['id'])) {
-                if ($table !== 'usuarios' && $table !== 'rol') {
-                    $stmt = $pdo->query("SELECT * FROM $table");
-                } else if ($table === 'usuarios') {
+                if ($table === 'usuarios') {
                     $stmt = $pdo->prepare("SELECT 
                             usuarios.id,
                             usuarios.nombre,
@@ -123,7 +121,7 @@ function handleOperation($pdo, $action, $table, $data) {
                         LEFT JOIN rolxpermiso ON rolxpermiso.id_rol = rol.id
                         LEFT JOIN permiso ON rolxpermiso.id_permiso = permiso.id
                         GROUP BY usuarios.id
-                        ");
+                    ");
                     $stmt->execute();
                 } else if ($table === 'rol') {
                     $stmt = $pdo->prepare("
@@ -139,8 +137,66 @@ function handleOperation($pdo, $action, $table, $data) {
                         GROUP BY rol.id
                     ");
                     $stmt->execute();
+                } else if ($table === 'clientes') {
+                    $stmt = $pdo->prepare("
+                        SELECT 
+                            u.id, 
+                            c.direccion, 
+                            u.nombre, 
+                            u.email, 
+                            u.telefono
+                        FROM 
+                            usuarios u
+                        INNER JOIN 
+                            clientes c ON u.id = c.id_usuario
+                    ");
+                    $stmt->execute();
+                } else if ($table === 'facturas') {
+                    $stmt = $pdo->prepare("
+                        SELECT 
+                            c.id AS id_cliente,
+                            c.direccion,
+                            u.id AS id_usuario,
+                            u.nombre,
+                            u.email,
+                            u.telefono,
+                            f.id AS id_factura,
+                            f.total,
+                            f.fecha
+                        FROM 
+                            clientes c
+                        INNER JOIN 
+                            usuarios u ON c.id_usuario = u.id
+                        INNER JOIN 
+                            facturas f ON f.id_cliente = c.id
+                    ");
+                    $stmt->execute();
+                } else if ($table === 'detalle_factura') {
+                    $stmt = $pdo->prepare("
+                        SELECT 
+                            f.id AS id_factura,
+                            f.total,
+                            f.fecha,
+                            df.id_producto,
+                            p.nombre AS nombre_producto,
+                            p.descripcion AS descripcion_producto,
+                            p.precio AS precio_producto,
+                            p.stock AS stock_producto,
+                            df.cantidad,
+                            df.precio_unitario,
+                            df.subtotal
+                        FROM 
+                            detalle_factura df
+                        INNER JOIN 
+                            facturas f ON df.id_factura = f.id
+                        INNER JOIN 
+                            productos p ON df.id_producto = p.id
+                    ");
+                    $stmt->execute();
+                } else {
+                    $stmt = $pdo->query("SELECT * FROM $table");
                 }
-                return $stmt->fetchAll(PDO::FETCH_ASSOC); 
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);                 
             } else {
                 if ($table !== 'rol') {
                     $stmt = $pdo->prepare("SELECT * FROM $table WHERE id = ?");
