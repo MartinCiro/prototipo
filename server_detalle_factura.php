@@ -6,7 +6,7 @@ try {
     $pdo = connectDatabase(); 
 
     $action = $_POST['action'] ?? '';
-    $table = 'facturas'; 
+    $table = 'detalle_factura'; 
 
     // Función para limpiar los datos
     function cleanData($data) {

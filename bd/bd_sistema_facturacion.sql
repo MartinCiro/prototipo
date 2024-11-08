@@ -105,6 +105,31 @@ LOCK TABLES `facturas` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `permiso`
+--
+
+DROP TABLE IF EXISTS `permiso`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `permiso` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `descripcion` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `permiso`
+--
+
+LOCK TABLES `permiso` WRITE;
+/*!40000 ALTER TABLE `permiso` DISABLE KEYS */;
+INSERT INTO `permiso` VALUES (1,'Consulta','Solo observa cambios'),(2,'Escritura','Solo guarda cambios'),(3,'Elimina','Este permiso otorga la opcion de eliminar informacion'),(4,'Actualiza','Para hacer insercion en base de datos');
+/*!40000 ALTER TABLE `permiso` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `permisos_usuario`
 --
 
@@ -116,8 +141,7 @@ CREATE TABLE `permisos_usuario` (
   `id_usuario` int(11) NOT NULL,
   `permiso` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `id_usuario` (`id_usuario`),
-  CONSTRAINT `permisos_usuario_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`)
+  KEY `id_usuario` (`id_usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -159,6 +183,58 @@ INSERT INTO `productos` VALUES (7,'papas','papas traidas de tu corazon',20,3,'20
 UNLOCK TABLES;
 
 --
+-- Table structure for table `rol`
+--
+
+DROP TABLE IF EXISTS `rol`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rol` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `descripcion` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rol`
+--
+
+LOCK TABLES `rol` WRITE;
+/*!40000 ALTER TABLE `rol` DISABLE KEYS */;
+INSERT INTO `rol` VALUES (1,'admin','AD'),(2,'invitados','este es una descripcion'),(17,'d','d');
+/*!40000 ALTER TABLE `rol` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `rolxpermiso`
+--
+
+DROP TABLE IF EXISTS `rolxpermiso`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rolxpermiso` (
+  `id_rol` int(11) NOT NULL,
+  `id_permiso` int(11) NOT NULL,
+  KEY `rolxpermiso_rol_FK` (`id_rol`),
+  KEY `rolxpermiso_permiso_FK` (`id_permiso`),
+  CONSTRAINT `rolxpermiso_permiso_FK` FOREIGN KEY (`id_permiso`) REFERENCES `permiso` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `rolxpermiso_rol_FK` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rolxpermiso`
+--
+
+LOCK TABLES `rolxpermiso` WRITE;
+/*!40000 ALTER TABLE `rolxpermiso` DISABLE KEYS */;
+INSERT INTO `rolxpermiso` VALUES (1,1),(1,2),(1,3),(1,4),(2,1),(2,2),(2,3),(17,1),(17,2),(17,3);
+/*!40000 ALTER TABLE `rolxpermiso` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `usuarios`
 --
 
@@ -172,9 +248,12 @@ CREATE TABLE `usuarios` (
   `telefono` varchar(15) DEFAULT NULL,
   `sincronizado` tinyint(1) DEFAULT 0,
   `password` varchar(255) NOT NULL,
+  `id_rol` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+  UNIQUE KEY `email` (`email`),
+  KEY `usuarios_rol_FK` (`id_rol`),
+  CONSTRAINT `usuarios_rol_FK` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,7 +262,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (2,'ciro','ciro@gmail.com','1',1,'123'),(3,'robin','m@g.com','1234',0,'12345'),(4,'ciro','m1@gmmil.com','232',0,'1232'),(5,'edjlkj','maritn@m.com','23',0,'123'),(6,'sjlfjsl','mar.com@a.com','12',0,'234');
+INSERT INTO `usuarios` VALUES (5,'edjlkj','maritn@m.com','23',0,'4',1),(14,'e','ciro@gmail.com','a',0,'esfds',1),(15,'b','b@gma.ocm','32',0,'234',17);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -196,4 +275,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-04 23:00:18
+-- Dump completed on 2024-11-08  2:25:01

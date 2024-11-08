@@ -3,7 +3,7 @@ class Modal {
         this.modal = document.getElementById(modalId);
         this.openButton = document.getElementById('openModal');
         this.closeButton = document.getElementById('closeModal');
-        this.dataForm = document.getElementById("dataForm"); // Asegúrate de que el ID es correcto
+        this.dataForm = document.getElementById("dataForm"); 
         this.init();
     }
 

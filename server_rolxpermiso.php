@@ -6,7 +6,7 @@ try {
     $pdo = connectDatabase(); 
 
     $action = $_POST['action'] ?? '';
-    $table = 'facturas'; 
+    $table = 'rolxpermiso'; 
 
     // Función para limpiar los datos
     function cleanData($data) {
@@ -16,6 +16,7 @@ try {
         return $data;
     }
 
+    // Limpiar los datos entrantes
     $cleanedData = cleanData($_POST);
 
     if ($action ) unset($cleanedData['action']);

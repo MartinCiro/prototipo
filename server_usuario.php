@@ -19,15 +19,13 @@ try {
     // Limpiar los datos entrantes
     $cleanedData = cleanData($_POST);
 
-    // Renombrar "contrasenia" a "password"
+    
     if (isset($cleanedData['contrasenia'])) {
         $cleanedData['password'] = $cleanedData['contrasenia'];
         unset($cleanedData['contrasenia']); 
     }
 
-    if ($action ) {
-        unset($cleanedData['action']);
-    }
+    if ($action ) unset($cleanedData['action']);
 
     $response = handleOperation($pdo, $action, $table, $cleanedData);
     echo json_encode($response);
